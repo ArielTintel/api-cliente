@@ -1,8 +1,6 @@
 package br.com.arieltintel.cliente.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -10,9 +8,12 @@ import javax.persistence.*;
 @Setter
 @Builder
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Cliente {
 
     @Id
+    @SequenceGenerator(name = "cliente_sequece", sequenceName = "cliente_sequece", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String nome;
