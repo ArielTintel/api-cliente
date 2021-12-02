@@ -1,7 +1,7 @@
 spring:
 
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:file:../api-cliente/testedb
     username: sa
     password:
     driverClassName: org.h2.Driver
@@ -10,6 +10,7 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     properties.hibernate.show_sql: true
     properties.hibernate.format_sql: true
+    hibernate.ddl-auto: update
 
   h2:
     console:
