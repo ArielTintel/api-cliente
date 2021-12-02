@@ -2,6 +2,7 @@ package br.com.arieltintel.cliente.service;
 
 import br.com.arieltintel.cliente.model.Cliente;
 import br.com.arieltintel.cliente.repository.ClienteRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,9 @@ public class ClienteService {
 
     @Autowired
     private ClienteRepository clienteRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     public Cliente criar(Cliente cliente){
         Cliente clienteSalvo = clienteRepository.save(cliente);
@@ -39,7 +43,9 @@ public class ClienteService {
         if(clienteBase == null){
             throw new Exception("Cliete não encontrado.");
         }
-        cliente.setId(id);
-        clienteRepository.save(cliente);
+        //Parse
+        modelMapper.map(cliente, clienteBase);
+
+        clienteRepository.save(clienteBase);
     }
 }
