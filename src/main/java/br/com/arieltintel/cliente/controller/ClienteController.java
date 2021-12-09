@@ -1,5 +1,7 @@
 package br.com.arieltintel.cliente.controller;
 
+import br.com.arieltintel.cliente.dto.ClienteRequestDTO;
+import br.com.arieltintel.cliente.dto.ClienteResponseDTO;
 import br.com.arieltintel.cliente.model.Cliente;
 import br.com.arieltintel.cliente.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +18,13 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping
-    public Cliente criar(@RequestBody Cliente cliente){
-        Cliente clienteSalvo = clienteService.criar(cliente);
+    public ClienteResponseDTO criar(@RequestBody ClienteRequestDTO clienteRequestDTO){
+        ClienteResponseDTO clienteSalvo = clienteService.criar(clienteRequestDTO);
         return clienteSalvo;
     }
 
     @GetMapping
-    public List<Cliente> listarClientes(){
+    public List<ClienteResponseDTO> listarClientes(){
         return clienteService.listarClientes();
     }
 
@@ -43,8 +45,8 @@ public class ClienteController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void atualizarCliente(@PathVariable Long id, @RequestBody Cliente cliente) throws Exception {
-        clienteService.atualizarCliente(cliente, id);
+    public void atualizarCliente(@PathVariable Long id, @RequestBody ClienteRequestDTO clienteRequestDTO) throws Exception {
+        clienteService.atualizarCliente(clienteRequestDTO, id);
     }
 
 }
