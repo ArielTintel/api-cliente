@@ -1,8 +1,10 @@
 package br.com.arieltintel.cliente.model;
 
+import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 
 @Getter
 @Setter
@@ -17,10 +19,19 @@ public class Cliente {
     @SequenceGenerator(name = "cliente_sequece", sequenceName = "cliente_sequece", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String nome;
-    private String cpf;
-    private String email;
-    private String ddd;
-    private String telefone;
 
+    @Column(nullable = false)
+    private String nome;
+
+    @Column(nullable = false, unique = true ,length = 11)
+    private String cpf;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(length = 3)
+    private String ddd;
+
+    @Column(length = 50)
+    private String telefone;
 }

@@ -2,10 +2,10 @@ package br.com.arieltintel.cliente.controller;
 
 import br.com.arieltintel.cliente.dto.ClienteRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteResponseDTO;
-import br.com.arieltintel.cliente.model.Cliente;
 import br.com.arieltintel.cliente.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping
-    public ClienteResponseDTO criar(@RequestBody ClienteRequestDTO clienteRequestDTO){
+    public ClienteResponseDTO criar(@Validated @RequestBody ClienteRequestDTO clienteRequestDTO){
         ClienteResponseDTO clienteSalvo = clienteService.criar(clienteRequestDTO);
         return clienteSalvo;
     }
@@ -46,7 +46,7 @@ public class ClienteController {
 
     @PutMapping("/{email}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void atualizarCliente(@PathVariable String email, @RequestBody ClienteRequestDTO clienteRequestDTO) throws Exception {
+    public void atualizarCliente(@PathVariable String email, @Validated @RequestBody ClienteRequestDTO clienteRequestDTO) throws Exception {
         clienteService.atualizarCliente(clienteRequestDTO, email);
     }
 }
