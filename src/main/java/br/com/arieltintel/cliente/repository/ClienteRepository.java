@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface ClienteRepository extends CrudRepository<Cliente, Long >{
 
     public Cliente findByEmail(String email);
+    public Cliente findByCpf(String cpf);
 
 }

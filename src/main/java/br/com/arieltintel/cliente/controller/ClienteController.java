@@ -28,25 +28,25 @@ public class ClienteController {
         return clienteService.listarClientes();
     }
 
-    @GetMapping("/{id}")
-    public Cliente consultarPorId(@PathVariable Long id){
-        return clienteService.consultarPorId(id);
-    }
-
-    @GetMapping("/email/{email}")
-    public Cliente consultarPorEmail(@PathVariable String email){
+    @GetMapping("/{email}/email")
+    public ClienteResponseDTO consultarPorEmail(@PathVariable String email){
         return clienteService.consultarPorEmail(email);
     }
 
-    @DeleteMapping("/{id}")
-    public void deletarCliente(@PathVariable Long id){
-        clienteService.deletarCliente(id);
+    @GetMapping("/{cpf}/cpf")
+    public ClienteResponseDTO consultarPorCpf(@PathVariable String cpf){
+        return clienteService.consultarPorCpf(cpf);
     }
 
-    @PutMapping("/{id}")
+    @DeleteMapping("/{email}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void atualizarCliente(@PathVariable Long id, @RequestBody ClienteRequestDTO clienteRequestDTO) throws Exception {
-        clienteService.atualizarCliente(clienteRequestDTO, id);
+    public void deletarCliente(@PathVariable String email) throws Exception {
+        clienteService.deletarCliente(email);
     }
 
+    @PutMapping("/{email}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void atualizarCliente(@PathVariable String email, @RequestBody ClienteRequestDTO clienteRequestDTO) throws Exception {
+        clienteService.atualizarCliente(clienteRequestDTO, email);
+    }
 }

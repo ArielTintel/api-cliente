@@ -37,25 +37,32 @@ public class ClienteService {
         return clienteResponseDTOList;
     }
 
-    public Cliente consultarPorId(Long id) {
-        return clienteRepository.findById(id).orElse(null);
+    public ClienteResponseDTO consultarPorCpf(String cpf) {
+        Cliente cliente = clienteRepository.findByCpf(cpf);
+        return modelMapper.map(cliente, ClienteResponseDTO.class);
     }
 
-    public void deletarCliente(Long id) {
-        clienteRepository.deleteById(id);
+    public void deletarCliente(String email) throws Exception {
+        Cliente cliente = clienteRepository.findByEmail(email);
+        if (cliente == null) {
+            throw new Exception("Cliete não encontrado. Verifique o Email digitado.");
+        }
+        clienteRepository.deleteById(cliente.getId());
+
     }
 
-    public Cliente consultarPorEmail(String email) {
-        return clienteRepository.findByEmail(email);
+    public ClienteResponseDTO consultarPorEmail(String email) {
+        Cliente cliente = clienteRepository.findByEmail(email);
+        return modelMapper.map(cliente, ClienteResponseDTO.class);
     }
 
-    public void atualizarCliente(ClienteRequestDTO clienteRequestDTO, Long id) throws Exception {
-        Cliente clienteBase = consultarPorId(id);
-        if(clienteBase == null){
+    public void atualizarCliente(ClienteRequestDTO clienteRequestDTO, String email) throws Exception {
+        Cliente cliente = clienteRepository.findByEmail(email);
+        if(cliente == null){
             throw new Exception("Cliete não encontrado.");
         }
         //Parse
-        modelMapper.map(clienteRequestDTO, clienteBase);
-        clienteRepository.save(clienteBase);
+        modelMapper.map(clienteRequestDTO, cliente);
+        clienteRepository.save(cliente);
     }
 }
