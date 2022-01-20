@@ -1,0 +1,30 @@
+version: '3.3'
+services:
+  db:
+    image: mysql
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - clientes-compose-network
+    restart: always
+    ports:
+      - "3308:3306"
+    environment:
+        MYSQL_ROOT_PASSWORD: arieltintel@123
+        MYSQL_DATABASE: clientes_db
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    networks:
+      - clientes-compose-network
+    links:
+      - db
+    ports:
+      - "8000:80"
+
+volumes:
+  dbdata:
+
+networks:
+  clientes-compose-network:
+    driver: bridge
