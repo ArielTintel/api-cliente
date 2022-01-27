@@ -1,21 +1,17 @@
 spring:
 
   datasource:
-    url: jdbc:h2:file:../api-cliente/testedb
-    username: sa
-    password:
-    driverClassName: org.h2.Driver
+    url: jdbc:mysql://localhost:3308/clientes_db?useTimezone=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+    username: root
+    password: arieltintel@123
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    properties.hibernate.show_sql: true
-    properties.hibernate.format_sql: true
-    hibernate.ddl-auto: create
-
-  h2:
-    console:
-      enabled: true
-      path: /h2
+    hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+    hibernate.ddl-auto: update
+    hibernate:
+      jdbc: time_zone = TimeZone
+    show-sql: true
+    format_sql: true
 
 server:
   port: 8090
