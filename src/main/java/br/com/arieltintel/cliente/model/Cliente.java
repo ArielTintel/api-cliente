@@ -1,10 +1,8 @@
 package br.com.arieltintel.cliente.model;
 
-import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
 
 @Getter
 @Setter

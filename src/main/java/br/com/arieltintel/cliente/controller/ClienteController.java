@@ -24,8 +24,8 @@ public class ClienteController {
     }
 
     @GetMapping
-    public List<ClienteResponseDTO> listarClientes(){
-        return clienteService.listarClientes();
+    public List<ClienteResponseDTO> listarClientes(@RequestParam(required = false) String nome){
+        return clienteService.listarClientes(nome);
     }
 
     @GetMapping("/{email}/email")

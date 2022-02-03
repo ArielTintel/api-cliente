@@ -76,7 +76,7 @@ public class ClienteServiceTest {
 
         when(clienteRepository.findAll()).thenReturn(clienteList);
 
-        List<ClienteResponseDTO> listaClientes = clienteService.listarClientes();
+        List<ClienteResponseDTO> listaClientes = clienteService.listarClientes(null);
         Assertions.assertNotNull(listaClientes);
         Assertions.assertEquals(3,listaClientes.size());
         Mockito.verify(clienteRepository,Mockito.times(1)).findAll();

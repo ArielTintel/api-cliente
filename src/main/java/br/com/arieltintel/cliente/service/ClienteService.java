@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -27,12 +29,22 @@ public class ClienteService {
         return clienteResponseDTO;
     }
 
-    public List<ClienteResponseDTO> listarClientes(){
-        List<Cliente> clienteList =  (List<Cliente>)clienteRepository.findAll();
+    public List<ClienteResponseDTO> listarClientes(String nome){
+
+        List<Cliente> clienteList = null;
+
+        if(nome == null) {
+            clienteList = (List<Cliente>)clienteRepository.findAll();
+        } else {
+            clienteList = (List<Cliente>)clienteRepository.findByNomeContainingIgnoreCase(nome);
+        }
+
+        Collections.sort(clienteList, Comparator.comparing(Cliente::getNome));
+
         List<ClienteResponseDTO> clienteResponseDTOList = new ArrayList<>();
         clienteList.forEach(cliente -> {
-          ClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, ClienteResponseDTO.class);
-          clienteResponseDTOList.add(clienteResponseDTO);
+            ClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, ClienteResponseDTO.class);
+            clienteResponseDTOList.add(clienteResponseDTO);
         });
         return clienteResponseDTOList;
     }
