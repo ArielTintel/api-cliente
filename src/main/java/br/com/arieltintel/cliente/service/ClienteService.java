@@ -6,6 +6,8 @@ import br.com.arieltintel.cliente.model.Cliente;
 import br.com.arieltintel.cliente.repository.ClienteRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ public class ClienteService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @CacheEvict(value = "clientes", allEntries = true)
     public ClienteResponseDTO criar(ClienteRequestDTO clienteRequestDTO){
         Cliente cliente = modelMapper.map(clienteRequestDTO, Cliente.class);
         Cliente clienteSalvo = clienteRepository.save(cliente);
@@ -29,6 +32,7 @@ public class ClienteService {
         return clienteResponseDTO;
     }
 
+    @Cacheable("clientes")
     public List<ClienteResponseDTO> listarClientes(String nome){
 
         List<Cliente> clienteList = null;
@@ -49,11 +53,13 @@ public class ClienteService {
         return clienteResponseDTOList;
     }
 
+    @Cacheable("clientes")
     public ClienteResponseDTO consultarPorCpf(String cpf) {
         Cliente cliente = clienteRepository.findByCpf(cpf);
         return modelMapper.map(cliente, ClienteResponseDTO.class);
     }
 
+    @CacheEvict(value = "clientes", allEntries = true)
     public void deletarCliente(String email) throws Exception {
         Cliente cliente = clienteRepository.findByEmail(email);
         if (cliente == null) {
@@ -63,11 +69,13 @@ public class ClienteService {
 
     }
 
+    @Cacheable("clientes")
     public ClienteResponseDTO consultarPorEmail(String email) {
         Cliente cliente = clienteRepository.findByEmail(email);
         return modelMapper.map(cliente, ClienteResponseDTO.class);
     }
 
+    @CacheEvict(value = "clientes", allEntries = true)
     public void atualizarCliente(ClienteRequestDTO clienteRequestDTO, String email) throws Exception {
         Cliente cliente = clienteRepository.findByEmail(email);
         if(cliente == null){
