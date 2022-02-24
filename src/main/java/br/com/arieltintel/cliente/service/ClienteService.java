@@ -26,10 +26,15 @@ public class ClienteService {
 
     @CacheEvict(value = "clientes", allEntries = true)
     public ClienteResponseDTO criar(ClienteRequestDTO clienteRequestDTO){
+        //Recebi um ClienteDTO e converti em tipo Cliente
         Cliente cliente = modelMapper.map(clienteRequestDTO, Cliente.class);
+        //Peguei o cliente salvei no banco, recebi de retorno o cliente salvo no banco
         Cliente clienteSalvo = clienteRepository.save(cliente);
+
+        //Peguei um clienteSalvo e convertir em ClienteResponseDTO
         ClienteResponseDTO clienteResponseDTO = modelMapper.map(clienteSalvo, ClienteResponseDTO.class);
         return clienteResponseDTO;
+
     }
 
     @Cacheable("clientes")
