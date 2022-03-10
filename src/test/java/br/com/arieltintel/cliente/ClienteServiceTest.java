@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -42,6 +41,7 @@ class ClienteServiceTest {
 				.email(EMAIL)
 				.cpf("89841010011")
 				.nome("João")
+				.sobrenome("Souza")
 				.telefone("40028922")
 				.ddd("11")
 				.build();
@@ -50,15 +50,16 @@ class ClienteServiceTest {
 				.email(EMAIL)
 				.cpf("89841010011")
 				.nome("João")
+				.sobrenome("Souza")
 				.telefone("40028922")
 				.ddd("11")
 				.id(1L)
 				.build();
 
 		clienteResponseDTO = ClienteResponseDTO.builder()
-				.email(EMAIL)
+				.enderecoEletronico(EMAIL)
 				.cpf("89841010011")
-				.nome("João")
+				.nomeCompleto("João Souza")
 				.telefone("40028922")
 				.ddd("11")
 				.build();
@@ -66,7 +67,7 @@ class ClienteServiceTest {
 		clienteRequestDTO = ClienteRequestDTO.builder()
 				.email(EMAIL)
 				.cpf("89841010011")
-				.nome("João")
+				.nomeCompleto("João Souza")
 				.telefone("40028922")
 				.ddd("11")
 				.build();
@@ -81,7 +82,7 @@ class ClienteServiceTest {
 		ClienteResponseDTO clienteResponse = clienteService.consultarPorEmail(EMAIL);
 
 		Assertions.assertNotNull(clienteResponse);
-		Assertions.assertEquals(EMAIL, clienteResponse.getEmail());
+		Assertions.assertEquals(EMAIL, clienteResponse.getEnderecoEletronico());
 	}
 
 	@Test
@@ -102,6 +103,7 @@ class ClienteServiceTest {
 		when(modelMapper.map(clienteRequestDTO, Cliente.class)).thenReturn(cliente);
 		when(clienteRepository.save(cliente)).thenReturn(clienteSalvo);
 		when(modelMapper.map(clienteSalvo, ClienteResponseDTO.class)).thenReturn(clienteResponseDTO);
+
 
 		ClienteResponseDTO clienteResponse = clienteService.criar(clienteRequestDTO);
 

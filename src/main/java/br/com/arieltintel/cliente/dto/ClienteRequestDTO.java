@@ -20,7 +20,7 @@ public class ClienteRequestDTO {
 
     @NotNull(message = "Nome é Obrigatório.")
     @Length(min = 3, max = 255)
-    private String nome;
+    private String nomeCompleto;
 
     @NotNull(message = "{cpf.notNull}")
     @CPF(message = "{cpf}")
