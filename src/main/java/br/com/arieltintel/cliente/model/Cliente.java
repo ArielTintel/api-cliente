@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Builder
-@Entity
+@Entity // REPRESENTA UMA TABELA NO BANCO DE DADOS
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "cliente")
@@ -18,8 +18,11 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "nome", nullable = false)
     private String nome;
+
+    @Column(name = "sobrenome", nullable = false)
+    private String sobrenome;
 
     @Column(nullable = false, unique = true ,length = 11)
     private String cpf;

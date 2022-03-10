@@ -26,15 +26,12 @@ public class ClienteService {
 
     @CacheEvict(value = "clientes", allEntries = true)
     public ClienteResponseDTO criar(ClienteRequestDTO clienteRequestDTO){
-        //Recebi um ClienteDTO e converti em tipo Cliente
-        Cliente cliente = modelMapper.map(clienteRequestDTO, Cliente.class);
-        //Peguei o cliente salvei no banco, recebi de retorno o cliente salvo no banco
+
+        Cliente cliente = convertCliente(clienteRequestDTO);
+        setNomeSobreNome(clienteRequestDTO, cliente);
         Cliente clienteSalvo = clienteRepository.save(cliente);
 
-        //Peguei um clienteSalvo e convertir em ClienteResponseDTO
-        ClienteResponseDTO clienteResponseDTO = modelMapper.map(clienteSalvo, ClienteResponseDTO.class);
-        return clienteResponseDTO;
-
+        return convertClienteResponseDTO(clienteSalvo);
     }
 
     @Cacheable("clientes")
@@ -51,8 +48,9 @@ public class ClienteService {
         Collections.sort(clienteList, Comparator.comparing(Cliente::getNome));
 
         List<ClienteResponseDTO> clienteResponseDTOList = new ArrayList<>();
+
         clienteList.forEach(cliente -> {
-            ClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, ClienteResponseDTO.class);
+            ClienteResponseDTO clienteResponseDTO = convertClienteResponseDTO(cliente);
             clienteResponseDTOList.add(clienteResponseDTO);
         });
         return clienteResponseDTOList;
@@ -71,7 +69,6 @@ public class ClienteService {
             throw new Exception("Cliete não encontrado. Verifique o Email digitado.");
         }
         clienteRepository.deleteById(cliente.getId());
-
     }
 
     @Cacheable("clientes")
@@ -86,8 +83,31 @@ public class ClienteService {
         if(cliente == null){
             throw new Exception("Cliete não encontrado.");
         }
-        //Parse
         modelMapper.map(clienteRequestDTO, cliente);
         clienteRepository.save(cliente);
+    }
+
+
+    private Cliente convertCliente(ClienteRequestDTO clienteRequestDTO) {
+        return modelMapper.map(clienteRequestDTO, Cliente.class);
+    }
+
+    //Passagem de valor dos Objetos por referencia
+    private void setNomeSobreNome(ClienteRequestDTO clienteRequestDTO, Cliente cliente) {
+        int delimitadorIndex = clienteRequestDTO.getNomeCompleto().indexOf(" ");
+        String nome = clienteRequestDTO.getNomeCompleto().substring(0, delimitadorIndex);
+        String sobrenome = clienteRequestDTO.getNomeCompleto().substring(delimitadorIndex+1, clienteRequestDTO.getNomeCompleto().length());
+
+        cliente.setNome(nome);
+        cliente.setSobrenome(sobrenome);
+    }
+
+    private ClienteResponseDTO convertClienteResponseDTO(Cliente clienteSalvo) {
+        ClienteResponseDTO clienteResponseDTO = modelMapper.map(clienteSalvo, ClienteResponseDTO.class);
+
+        clienteResponseDTO.setNomeCompleto(clienteSalvo.getNome() + " " + clienteSalvo.getSobrenome());
+        clienteResponseDTO.setEnderecoEletronico(clienteSalvo.getEmail());
+
+        return clienteResponseDTO;
     }
 }
