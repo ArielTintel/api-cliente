@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Builder
-@Entity // REPRESENTA UMA TABELA NO BANCO DE DADOS
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "cliente")

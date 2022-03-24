@@ -4,6 +4,7 @@ import br.com.arieltintel.cliente.dto.ClienteRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteResponseDTO;
 import br.com.arieltintel.cliente.model.Cliente;
 import br.com.arieltintel.cliente.repository.ClienteRepository;
+import br.com.arieltintel.cliente.utils.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -28,7 +29,6 @@ public class ClienteService {
     public ClienteResponseDTO criar(ClienteRequestDTO clienteRequestDTO){
 
         Cliente cliente = convertCliente(clienteRequestDTO);
-        setNomeSobreNome(clienteRequestDTO, cliente);
         Cliente clienteSalvo = clienteRepository.save(cliente);
 
         return convertClienteResponseDTO(clienteSalvo);
@@ -87,12 +87,16 @@ public class ClienteService {
         clienteRepository.save(cliente);
     }
 
-
     private Cliente convertCliente(ClienteRequestDTO clienteRequestDTO) {
-        return modelMapper.map(clienteRequestDTO, Cliente.class);
+
+        clienteRequestDTO.setCpf(StringUtils.removeCaracterEspecial(clienteRequestDTO.getCpf()));
+        Cliente cliente = modelMapper.map(clienteRequestDTO, Cliente.class);
+
+        setNomeSobreNome(clienteRequestDTO, cliente);
+
+        return cliente;
     }
 
-    //Passagem de valor dos Objetos por referencia
     private void setNomeSobreNome(ClienteRequestDTO clienteRequestDTO, Cliente cliente) {
         int delimitadorIndex = clienteRequestDTO.getNomeCompleto().indexOf(" ");
         String nome = clienteRequestDTO.getNomeCompleto().substring(0, delimitadorIndex);

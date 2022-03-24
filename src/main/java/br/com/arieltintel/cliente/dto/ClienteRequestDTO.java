@@ -8,8 +8,6 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.br.CPF;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -24,6 +22,7 @@ public class ClienteRequestDTO {
 
     @NotNull(message = "{cpf.notNull}")
     @CPF(message = "{cpf}")
+    @Length(min = 11, max = 14)
     private String cpf;
 
     @NotNull(message = "{email.notNull}")
