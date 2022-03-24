@@ -20,7 +20,6 @@ public class ClienteController {
     @PostMapping
     public ClienteResponseDTO criar(@Validated @RequestBody ClienteRequestDTO clienteRequestDTO){
 
-        //Recebi um RequestDTO, solicitei ao Service que crie um ResponseDTO
         ClienteResponseDTO clienteSalvo = clienteService.criar(clienteRequestDTO);
         return clienteSalvo;
 
