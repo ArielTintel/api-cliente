@@ -13,6 +13,9 @@ spring:
     show-sql: true
     format_sql: true
 
+  jackson:
+    default-property-inclusion: NON_NULL
+
 server:
   port: 8090
 
