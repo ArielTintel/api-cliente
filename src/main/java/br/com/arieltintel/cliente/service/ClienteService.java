@@ -11,11 +11,10 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class ClienteService {
@@ -50,21 +49,15 @@ public class ClienteService {
 
         Collections.sort(clienteList, Comparator.comparing(Cliente::getNome));
 
-        List<ClienteResponseDTO> clienteResponseDTOList = new ArrayList<>();
-
-        clienteList.forEach(cliente -> {
-            ClienteResponseDTO clienteResponseDTO = convertClienteResponseDTO(cliente);
-            clienteResponseDTOList.add(clienteResponseDTO);
-        });
-        return clienteResponseDTOList;
+        return convertClienteResponseList(clienteList);
     }
 
     @Cacheable("clientes")
     public ClienteResponseDTO consultarPorCpf(String cpf) {
-        cpf = TextoUtils.removeCaracterEspecial(cpf);
+        cpf = TextoUtils.removerCaracterEspecial(cpf);
         if(TextoUtils.contemTexto(cpf)){
             Cliente cliente = clienteRepository.findByCpf(cpf);
-            return converteClienteResponseDTO(cliente);
+            return convertClienteResponseDTO(cliente);
         }
         return null;
     }
@@ -82,7 +75,7 @@ public class ClienteService {
     public ClienteResponseDTO consultarPorEmail(String email) {
         if(TextoUtils.contemTexto(email)){
             Cliente cliente = clienteRepository.findByEmail(email);
-            return converteClienteResponseDTO(cliente);
+            return convertClienteResponseDTO(cliente);
         }
         return null;
     }
@@ -97,21 +90,9 @@ public class ClienteService {
         clienteRepository.save(cliente);
     }
 
-    private ClienteResponseDTO converteClienteResponseDTO(Cliente cliente) {
-        if(Objects.nonNull(cliente)){
-            return modelMapper.createTypeMap(cliente, ClienteResponseDTO.class)
-                    .addMapping(Cliente::getEmail, ClienteResponseDTO::setEnderecoEletronico)
-                    .addMapping(source -> {
-                        return cliente.getNome().concat(ESPACO).concat(cliente.getSobrenome());
-                    }, ClienteResponseDTO::setNomeCompleto)
-                    .map(cliente);
-        }
-        return null;
-    }
-
     private Cliente convertCliente(ClienteRequestDTO clienteRequestDTO) {
 
-        clienteRequestDTO.setCpf(TextoUtils.removeCaracterEspecial(clienteRequestDTO.getCpf()));
+        clienteRequestDTO.setCpf(TextoUtils.removerCaracterEspecial(clienteRequestDTO.getCpf()));
         Cliente cliente = modelMapper.map(clienteRequestDTO, Cliente.class);
 
         setNomeSobreNome(clienteRequestDTO, cliente);
@@ -128,11 +109,17 @@ public class ClienteService {
         cliente.setSobrenome(sobrenome);
     }
 
-    private ClienteResponseDTO convertClienteResponseDTO(Cliente clienteSalvo) {
-        ClienteResponseDTO clienteResponseDTO = modelMapper.map(clienteSalvo, ClienteResponseDTO.class);
+    private List<ClienteResponseDTO> convertClienteResponseList(List<Cliente> clienteList) {
+        return clienteList.stream().map(cliente -> {
+                    return convertClienteResponseDTO(cliente);
+                }).collect(Collectors.toList());
+    }
 
-        clienteResponseDTO.setNomeCompleto(clienteSalvo.getNome().concat(ESPACO).concat(clienteSalvo.getSobrenome()));
-        clienteResponseDTO.setEnderecoEletronico(clienteSalvo.getEmail());
+    private ClienteResponseDTO convertClienteResponseDTO(Cliente cliente) {
+        ClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, ClienteResponseDTO.class);
+        clienteResponseDTO.setNomeCompleto(cliente.getNome().concat(ESPACO).concat(cliente.getSobrenome()));
+        clienteResponseDTO.setEnderecoEletronico(cliente.getEmail());
+        clienteResponseDTO.setCpf(TextoUtils.adicionarMascaraCPF(clienteResponseDTO.getCpf()));
 
         return clienteResponseDTO;
     }
