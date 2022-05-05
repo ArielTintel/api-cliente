@@ -35,4 +35,6 @@ public class ClienteRequestDTO {
     @Length(min = 5, max = 30)
     private String telefone;
 
+    private EnderecoDTO endereco;
+
 }

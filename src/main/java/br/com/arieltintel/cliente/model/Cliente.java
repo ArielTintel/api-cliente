@@ -36,4 +36,8 @@ public class Cliente {
     @Column(length = 50)
     private String telefone;
 
+    @OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private Endereco endereco;
+
 }
