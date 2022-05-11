@@ -3,7 +3,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3308/clientes_db?useTimezone=true&serverTimezone=UTC&createDatabaseIfNotExist=true
     username: root
-    password: arieltintel@123
+    password: Bora1234
 
   jpa:
     hibernate.dialect: org.hibernate.dialect.MySQL5Dialect

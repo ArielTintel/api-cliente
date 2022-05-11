@@ -16,5 +16,6 @@ public class ClienteResponseDTO {
     private String enderecoEletronico;
     private String ddd;
     private String telefone;
+    private EnderecoDTO endereco;
 
 }
