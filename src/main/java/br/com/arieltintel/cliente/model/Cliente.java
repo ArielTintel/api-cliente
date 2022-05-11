@@ -14,7 +14,6 @@ import javax.persistence.*;
 public class Cliente {
 
     @Id
-    @SequenceGenerator(name = "cliente_sequece", sequenceName = "cliente_sequece", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
