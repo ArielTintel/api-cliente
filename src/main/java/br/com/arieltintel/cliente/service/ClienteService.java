@@ -40,7 +40,7 @@ public class ClienteService {
         Cliente clienteSalvo = clienteRepository.save(cliente);
 
         clienteSalvo.setEndereco(Endereco.builder()
-                .Id(clienteSalvo.getId())
+                .id(clienteSalvo.getId())
                 .cliente(clienteSalvo)
                 .cep(clienteRequestDTO.getEndereco().getCep())
                 .cidade(clienteRequestDTO.getEndereco().getCidade())
@@ -125,7 +125,6 @@ public class ClienteService {
 
     }
 
-    //Passagem de valor dos Objetos por referencia
     private void setNomeSobreNome(ClienteRequestDTO clienteRequestDTO, Cliente cliente) {
         int delimitadorIndex = clienteRequestDTO.getNomeCompleto().indexOf(ESPACO);
         String nome = clienteRequestDTO.getNomeCompleto().substring(ZERO, delimitadorIndex);
