@@ -20,19 +20,19 @@ public class EnderecoServiceImpl implements EnderecoService {
     private ModelMapper modelMapper;
 
     @Override
-    public EnderecoRequestDTO findByClienteCpf(String cpf) {
+    public EnderecoRequestDTO findByCpfCliente(String cpf) {
         cpf = TextoUtils.removeEspecialCaracter(cpf);
         if (TextoUtils.contemTexto(cpf)) {
-            Endereco endereco = enderecoRepository.findByClienteCpf(cpf);
+            Endereco endereco = enderecoRepository.findByCpfCliente(cpf);
             return modelMapper.map(endereco, EnderecoRequestDTO.class);
         }
         return null;
     }
 
     @Override
-    public EnderecoRequestDTO findByClienteEmail(String email) {
+    public EnderecoRequestDTO findByEmailCliente(String email) {
 
-        Endereco endereco = enderecoRepository.findByClienteEmail(email);
+        Endereco endereco = enderecoRepository.findByEmailCliente(email);
 
         return EnderecoRequestDTO.builder()
                 .cep(endereco.getCep())
@@ -46,9 +46,9 @@ public class EnderecoServiceImpl implements EnderecoService {
     }
 
     @Override
-    public EnderecoResponseDTO updateEndereco(String cpf, EnderecoRequestDTO enderecoRequestDTO) throws Exception {
+    public EnderecoResponseDTO updateEnderecoByCpfCliente(String cpf, EnderecoRequestDTO enderecoRequestDTO) throws Exception {
         cpf = TextoUtils.removeEspecialCaracter(cpf);
-        Endereco endereco = enderecoRepository.findByClienteCpf(cpf);
+        Endereco endereco = enderecoRepository.findByCpfCliente(cpf);
         if(endereco == null){
             throw new Exception("Endereço não encontrado.");
         }

@@ -5,10 +5,10 @@ import br.com.arieltintel.cliente.dto.EnderecoResponseDTO;
 
 public interface EnderecoService {
 
-    EnderecoRequestDTO findByClienteCpf(String cpf);
+    EnderecoRequestDTO findByCpfCliente(String cpf);
 
-    EnderecoRequestDTO findByClienteEmail(String email);
+    EnderecoRequestDTO findByEmailCliente(String email);
 
-    EnderecoResponseDTO updateEndereco(String cpf, EnderecoRequestDTO enderecoRequestDTO) throws Exception;
+    EnderecoResponseDTO updateEnderecoByCpfCliente(String cpf, EnderecoRequestDTO enderecoRequestDTO) throws Exception;
 
 }
