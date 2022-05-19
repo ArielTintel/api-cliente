@@ -2,11 +2,10 @@ package br.com.arieltintel.cliente.service;
 
 import br.com.arieltintel.cliente.dto.ClienteRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteResponseDTO;
-import br.com.arieltintel.cliente.dto.EnderecoDTO;
+import br.com.arieltintel.cliente.dto.EnderecoRequestDTO;
 import br.com.arieltintel.cliente.model.Cliente;
 import br.com.arieltintel.cliente.model.Endereco;
 import br.com.arieltintel.cliente.repository.ClienteRepository;
-import br.com.arieltintel.cliente.service.ClienteService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -84,7 +83,7 @@ class ClienteServiceTest {
 				.nomeCompleto("João Souza")
 				.telefone("40028922")
 				.ddd("11")
-				.endereco(EnderecoDTO.builder()
+				.endereco(EnderecoRequestDTO.builder()
 						.cidade("Salvador")
 						.uf("BA")
 						.cep("41390090")
@@ -101,7 +100,7 @@ class ClienteServiceTest {
 				.nomeCompleto("João Souza")
 				.telefone("40028922")
 				.ddd("11")
-				.endereco(EnderecoDTO.builder()
+				.endereco(EnderecoRequestDTO.builder()
 						.cidade("Salvador")
 						.uf("BA")
 						.cep("41390090")

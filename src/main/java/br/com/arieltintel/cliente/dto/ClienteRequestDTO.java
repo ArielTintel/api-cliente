@@ -8,7 +8,6 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.br.CPF;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -36,6 +35,6 @@ public class ClienteRequestDTO {
     @Length(min = 5, max = 30)
     private String telefone;
 
-    private EnderecoDTO endereco;
+    private EnderecoRequestDTO endereco;
 
 }

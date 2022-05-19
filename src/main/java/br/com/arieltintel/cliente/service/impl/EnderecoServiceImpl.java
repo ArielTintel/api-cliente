@@ -1,9 +1,12 @@
 package br.com.arieltintel.cliente.service.impl;
 
-import br.com.arieltintel.cliente.dto.EnderecoDTO;
+import br.com.arieltintel.cliente.dto.EnderecoRequestDTO;
+import br.com.arieltintel.cliente.dto.EnderecoResponseDTO;
 import br.com.arieltintel.cliente.model.Endereco;
 import br.com.arieltintel.cliente.repository.EnderecoRepository;
 import br.com.arieltintel.cliente.service.EnderecoService;
+import br.com.arieltintel.cliente.utils.TextoUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,17 +16,25 @@ public class EnderecoServiceImpl implements EnderecoService {
     @Autowired
     EnderecoRepository enderecoRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
-    public EnderecoDTO findByClienteCpf(String cpf) {
+    public EnderecoRequestDTO findByClienteCpf(String cpf) {
+        cpf = TextoUtils.removeEspecialCaracter(cpf);
+        if (TextoUtils.contemTexto(cpf)) {
+            Endereco endereco = enderecoRepository.findByClienteCpf(cpf);
+            return modelMapper.map(endereco, EnderecoRequestDTO.class);
+        }
         return null;
     }
 
     @Override
-    public EnderecoDTO findByClienteEmail(String email) {
+    public EnderecoRequestDTO findByClienteEmail(String email) {
 
         Endereco endereco = enderecoRepository.findByClienteEmail(email);
 
-        return EnderecoDTO.builder()
+        return EnderecoRequestDTO.builder()
                 .cep(endereco.getCep())
                 .cidade(endereco.getCidade())
                 .complemento(endereco.getComplemento())
@@ -32,5 +43,18 @@ public class EnderecoServiceImpl implements EnderecoService {
                 .numero(endereco.getNumero())
                 .referencia(endereco.getReferencia())
                 .build();
+    }
+
+    @Override
+    public EnderecoResponseDTO updateEndereco(String cpf, EnderecoRequestDTO enderecoRequestDTO) throws Exception {
+        cpf = TextoUtils.removeEspecialCaracter(cpf);
+        Endereco endereco = enderecoRepository.findByClienteCpf(cpf);
+        if(endereco == null){
+            throw new Exception("Endereço não encontrado.");
+        }
+        modelMapper.map(enderecoRequestDTO, endereco);
+        enderecoRepository.save(endereco);
+
+        return modelMapper.map(endereco, EnderecoResponseDTO.class);
     }
 }
