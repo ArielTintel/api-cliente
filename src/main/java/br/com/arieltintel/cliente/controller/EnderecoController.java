@@ -23,20 +23,20 @@ public class EnderecoController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/cpf/{cpf}")
     public EnderecoRequestDTO findByCpfCliente(@PathVariable String cpf){
-        return enderecoService.findByClienteCpf(cpf);
+        return enderecoService.findByCpfCliente(cpf);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/email/{email}")
     public EnderecoRequestDTO findByEmailCliente(@PathVariable String email){
-        return enderecoService.findByClienteEmail(email);
+        return enderecoService.findByEmailCliente(email);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{cpf}")
     public EnderecoResponseDTO updateByCpfCliente(@PathVariable String cpf,
                                                   @RequestBody EnderecoRequestDTO enderecoRequestDTO) throws Exception {
-        return enderecoService.updateEndereco(cpf, enderecoRequestDTO);
+        return enderecoService.updateEnderecoByCpfCliente(cpf, enderecoRequestDTO);
     }
 
 }
