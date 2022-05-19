@@ -2,7 +2,7 @@ package br.com.arieltintel.cliente.service;
 
 import br.com.arieltintel.cliente.dto.ClienteRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteResponseDTO;
-import br.com.arieltintel.cliente.dto.EnderecoDTO;
+import br.com.arieltintel.cliente.dto.EnderecoRequestDTO;
 import br.com.arieltintel.cliente.model.Cliente;
 import br.com.arieltintel.cliente.model.Endereco;
 import br.com.arieltintel.cliente.repository.ClienteRepository;
@@ -118,11 +118,7 @@ public class ClienteService {
         setNomeSobreNome(clienteRequestDTO, cliente);
         cliente.setEndereco(null);
 
-
         return cliente;
-
-
-
     }
 
     private void setNomeSobreNome(ClienteRequestDTO clienteRequestDTO, Cliente cliente) {
@@ -137,11 +133,10 @@ public class ClienteService {
     private ClienteResponseDTO convertClienteResponseDTO(Cliente clienteSalvo) {
         ClienteResponseDTO clienteResponseDTO = modelMapper.map(clienteSalvo, ClienteResponseDTO.class);
 
-
         clienteResponseDTO.setNomeCompleto(clienteSalvo.getNome() + ESPACO + clienteSalvo.getSobrenome());
         clienteResponseDTO.setEnderecoEletronico(clienteSalvo.getEmail());
         clienteResponseDTO.setCpf(TextoUtils.adicionarMascaraCPF(clienteResponseDTO.getCpf()));
-        clienteResponseDTO.setEndereco(EnderecoDTO.builder()
+        clienteResponseDTO.setEndereco(EnderecoRequestDTO.builder()
                 .complemento(clienteSalvo.getEndereco().getComplemento())
                 .numero(clienteSalvo.getEndereco().getNumero())
                 .referencia(clienteSalvo.getEndereco().getReferencia())
