@@ -11,4 +11,6 @@ public interface EnderecoService {
 
     void updateEnderecoByCpfCliente(String cpf, EnderecoRequestDTO enderecoRequestDTO) throws Exception;
 
+    void updateEnderecoByEmailCliente(String email, EnderecoRequestDTO enderecoRequestDTO) throws Exception;
+
 }

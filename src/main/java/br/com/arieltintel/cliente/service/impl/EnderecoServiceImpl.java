@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 @Service
 public class EnderecoServiceImpl implements EnderecoService {
@@ -55,6 +56,16 @@ public class EnderecoServiceImpl implements EnderecoService {
         cpf = TextoUtils.removeEspecialCaracter(cpf);
         Endereco endereco = enderecoRepository.findByCpfCliente(cpf);
         if(endereco == null){
+            throw new Exception("Endereço não encontrado.");
+        }
+        modelMapper.map(enderecoRequestDTO, endereco);
+        enderecoRepository.save(endereco);
+    }
+
+    @Override
+    public void updateEnderecoByEmailCliente(String email, EnderecoRequestDTO enderecoRequestDTO) throws Exception {
+        Endereco endereco = enderecoRepository.findByEmailCliente(email);
+        if(ObjectUtils.isEmpty(endereco)){
             throw new Exception("Endereço não encontrado.");
         }
         modelMapper.map(enderecoRequestDTO, endereco);
