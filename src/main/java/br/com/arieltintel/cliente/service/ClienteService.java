@@ -79,7 +79,7 @@ public class ClienteService {
     @Cacheable("clientes")
     public ClienteResponseDTO consultarPorCpf(String cpf) {
         cpf = TextoUtils.removeEspecialCaracter(cpf);
-        if (!TextoUtils.contemTexto(cpf)) {
+        if (TextoUtils.contemTexto(cpf)) {
             Cliente cliente = clienteRepository.findByCpf(cpf);
             return modelMapper.map(cliente, ClienteResponseDTO.class);
         }

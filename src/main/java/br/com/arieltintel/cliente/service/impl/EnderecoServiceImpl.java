@@ -8,6 +8,8 @@ import br.com.arieltintel.cliente.service.EnderecoService;
 import br.com.arieltintel.cliente.utils.TextoUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +22,7 @@ public class EnderecoServiceImpl implements EnderecoService {
     private ModelMapper modelMapper;
 
     @Override
+    @Cacheable("clientes")
     public EnderecoRequestDTO findByCpfCliente(String cpf) {
         cpf = TextoUtils.removeEspecialCaracter(cpf);
         if (TextoUtils.contemTexto(cpf)) {
@@ -30,6 +33,7 @@ public class EnderecoServiceImpl implements EnderecoService {
     }
 
     @Override
+    @Cacheable("clientes")
     public EnderecoRequestDTO findByEmailCliente(String email) {
 
         Endereco endereco = enderecoRepository.findByEmailCliente(email);
@@ -46,7 +50,8 @@ public class EnderecoServiceImpl implements EnderecoService {
     }
 
     @Override
-    public EnderecoResponseDTO updateEnderecoByCpfCliente(String cpf, EnderecoRequestDTO enderecoRequestDTO) throws Exception {
+    @CacheEvict(value = "clientes", allEntries = true)
+    public void updateEnderecoByCpfCliente(String cpf, EnderecoRequestDTO enderecoRequestDTO) throws Exception {
         cpf = TextoUtils.removeEspecialCaracter(cpf);
         Endereco endereco = enderecoRepository.findByCpfCliente(cpf);
         if(endereco == null){
@@ -54,7 +59,5 @@ public class EnderecoServiceImpl implements EnderecoService {
         }
         modelMapper.map(enderecoRequestDTO, endereco);
         enderecoRepository.save(endereco);
-
-        return modelMapper.map(endereco, EnderecoResponseDTO.class);
     }
 }
