@@ -117,6 +117,7 @@ public class ClienteService {
         Cliente cliente = modelMapper.map(clienteRequestDTO, Cliente.class);
         setNomeSobreNome(clienteRequestDTO, cliente);
         cliente.setEndereco(null);
+        cliente.getTelefones().stream().forEach(telefone -> telefone.setCliente(cliente));
 
         return cliente;
     }
