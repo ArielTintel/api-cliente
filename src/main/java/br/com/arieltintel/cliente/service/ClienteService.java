@@ -3,8 +3,10 @@ package br.com.arieltintel.cliente.service;
 import br.com.arieltintel.cliente.dto.ClienteRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteResponseDTO;
 import br.com.arieltintel.cliente.dto.EnderecoRequestDTO;
+import br.com.arieltintel.cliente.dto.TelefoneRequestDTO;
 import br.com.arieltintel.cliente.model.Cliente;
 import br.com.arieltintel.cliente.model.Endereco;
+import br.com.arieltintel.cliente.model.Telefone;
 import br.com.arieltintel.cliente.repository.ClienteRepository;
 import br.com.arieltintel.cliente.utils.TextoUtils;
 import org.modelmapper.ModelMapper;
@@ -146,6 +148,7 @@ public class ClienteService {
                 .logradouro(clienteSalvo.getEndereco().getLogradouro())
                 .cidade(clienteSalvo.getEndereco().getCidade())
                 .build());
+
         return clienteResponseDTO;
     }
 }
