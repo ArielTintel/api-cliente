@@ -3,6 +3,7 @@ package br.com.arieltintel.cliente.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,14 +30,12 @@ public class Cliente {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(length = 3)
-    private String ddd;
-
-    @Column(length = 50)
-    private String telefone;
-
     @OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private Endereco endereco;
+
+    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name="cliente_id")
+    private List<Telefone> telefones;
 
 }

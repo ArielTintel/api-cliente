@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.br.CPF;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @Builder
@@ -29,12 +30,8 @@ public class ClienteRequestDTO {
     @Email(message = "{email}")
     private String email;
 
-    @Length(min = 2, max = 3)
-    private String ddd;
-
-    @Length(min = 5, max = 30)
-    private String telefone;
-
     private EnderecoRequestDTO endereco;
+
+    private List<TelefoneRequestDTO> telefones;
 
 }
