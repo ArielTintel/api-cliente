@@ -1,4 +1,4 @@
-package br.com.arieltintel.cliente.service;
+package br.com.arieltintel.cliente.service.impl;
 
 import br.com.arieltintel.cliente.dto.ClienteRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteResponseDTO;
@@ -6,31 +6,40 @@ import br.com.arieltintel.cliente.dto.EnderecoRequestDTO;
 import br.com.arieltintel.cliente.model.Cliente;
 import br.com.arieltintel.cliente.model.Endereco;
 import br.com.arieltintel.cliente.repository.ClienteRepository;
+import br.com.arieltintel.cliente.service.ClienteService;
 import br.com.arieltintel.cliente.utils.TextoUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 @Service
-public interface ClienteService {
+public class ClienteServiceImpl implements ClienteService {
 
-    ClienteResponseDTO criar(ClienteRequestDTO clienteRequestDTO);
+    @Autowired
+    private ClienteRepository clienteRepository;
 
-    List<ClienteResponseDTO> listarClientes(String nome);
+    @Autowired
+    private ModelMapper modelMapper;
 
-    ClienteResponseDTO consultarPorEmail(String email);
+    public static final String ESPACO = " ";
+    public static final int ZERO = 0;
 
-    ClienteResponseDTO consultarPorCpf(String cpf);
+    @CacheEvict(value = "clientes", allEntries = true)
+    @Transactional
+    public ClienteResponseDTO criar(ClienteRequestDTO clienteRequestDTO){
 
-    void atualizarCliente(ClienteRequestDTO clienteRequestDTO, String email) throws Exception;
+        Cliente cliente = convertCliente(clienteRequestDTO);
 
         Cliente clienteSalvo = clienteRepository.save(cliente);
 
@@ -54,7 +63,7 @@ public interface ClienteService {
 
         List<Cliente> clienteList = null;
 
-        if(nome == null) {
+        if(StringUtils.hasText(nome)) {
             clienteList = (List<Cliente>)clienteRepository.findAll();
         } else {
             clienteList = (List<Cliente>)clienteRepository.findByNomeContainingIgnoreCase(nome);
@@ -74,7 +83,7 @@ public interface ClienteService {
     @Cacheable("clientes")
     public ClienteResponseDTO consultarPorCpf(String cpf) {
         cpf = TextoUtils.removeEspecialCaracter(cpf);
-        if (!TextoUtils.contemTexto(cpf)) {
+        if (TextoUtils.contemTexto(cpf)) {
             Cliente cliente = clienteRepository.findByCpf(cpf);
             return modelMapper.map(cliente, ClienteResponseDTO.class);
         }
@@ -84,7 +93,7 @@ public interface ClienteService {
     @CacheEvict(value = "clientes", allEntries = true)
     public void deletarCliente(String email) throws Exception {
         Cliente cliente = clienteRepository.findByEmail(email);
-        if (cliente == null) {
+        if (ObjectUtils.isEmpty(cliente)) {
             throw new Exception("Cliente não encontrado. Verifique o Email digitado.");
         }
         clienteRepository.deleteById(cliente.getId());
@@ -99,7 +108,7 @@ public interface ClienteService {
     @CacheEvict(value = "clientes", allEntries = true)
     public void atualizarCliente(ClienteRequestDTO clienteRequestDTO, String email) throws Exception {
         Cliente cliente = clienteRepository.findByEmail(email);
-        if(cliente == null){
+        if(ObjectUtils.isEmpty(cliente)){
             throw new Exception("Cliente não encontrado.");
         }
         modelMapper.map(clienteRequestDTO, cliente);
@@ -112,7 +121,6 @@ public interface ClienteService {
         Cliente cliente = modelMapper.map(clienteRequestDTO, Cliente.class);
         setNomeSobreNome(clienteRequestDTO, cliente);
         cliente.setEndereco(null);
-        cliente.getTelefones().stream().forEach(telefone -> telefone.setCliente(cliente));
 
         return cliente;
     }

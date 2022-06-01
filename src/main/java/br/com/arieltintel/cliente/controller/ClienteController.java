@@ -30,23 +30,23 @@ public class ClienteController {
         return clienteService.listarClientes(nome);
     }
 
-    @GetMapping("/{email}/email")
+    @GetMapping("/email/{email}")
     public ClienteResponseDTO consultarPorEmail(@PathVariable String email){
         return clienteService.consultarPorEmail(email);
     }
 
-    @GetMapping("/{cpf}/cpf")
+    @GetMapping("/cpf/{cpf}")
     public ClienteResponseDTO consultarPorCpf(@PathVariable String cpf){
         return clienteService.consultarPorCpf(cpf);
     }
 
-    @DeleteMapping("/{email}")
+    @DeleteMapping("/email/{email}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletarCliente(@PathVariable String email) throws Exception {
         clienteService.deletarCliente(email);
     }
 
-    @PutMapping("/{email}")
+    @PutMapping("/email/{email}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void atualizarCliente(@PathVariable String email, @Validated @RequestBody ClienteRequestDTO clienteRequestDTO) throws Exception {
         clienteService.atualizarCliente(clienteRequestDTO, email);
