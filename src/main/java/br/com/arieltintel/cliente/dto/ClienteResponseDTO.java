@@ -1,9 +1,12 @@
 package br.com.arieltintel.cliente.dto;
 
+import br.com.arieltintel.cliente.model.Telefone;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -15,7 +18,7 @@ public class ClienteResponseDTO {
     private String cpf;
     private String enderecoEletronico;
     private String ddd;
-    private String telefone;
     private EnderecoRequestDTO endereco;
+    private List<TelefoneRequestDTO> telefones;
 
 }
