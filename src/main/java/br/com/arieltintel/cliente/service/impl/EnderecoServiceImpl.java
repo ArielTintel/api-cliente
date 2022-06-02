@@ -1,7 +1,6 @@
 package br.com.arieltintel.cliente.service.impl;
 
 import br.com.arieltintel.cliente.dto.EnderecoRequestDTO;
-import br.com.arieltintel.cliente.dto.EnderecoResponseDTO;
 import br.com.arieltintel.cliente.model.Endereco;
 import br.com.arieltintel.cliente.repository.EnderecoRepository;
 import br.com.arieltintel.cliente.service.EnderecoService;
