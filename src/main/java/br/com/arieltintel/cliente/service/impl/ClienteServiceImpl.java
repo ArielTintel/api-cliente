@@ -17,7 +17,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -121,6 +120,7 @@ public class ClienteServiceImpl implements ClienteService {
         Cliente cliente = modelMapper.map(clienteRequestDTO, Cliente.class);
         setNomeSobreNome(clienteRequestDTO, cliente);
         cliente.setEndereco(null);
+        cliente.getTelefones().stream().forEach(telefone -> telefone.setCliente(cliente));
 
         return cliente;
     }
