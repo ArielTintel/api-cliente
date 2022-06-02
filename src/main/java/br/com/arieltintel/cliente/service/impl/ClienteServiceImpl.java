@@ -8,6 +8,7 @@ import br.com.arieltintel.cliente.model.Endereco;
 import br.com.arieltintel.cliente.repository.ClienteRepository;
 import br.com.arieltintel.cliente.service.ClienteService;
 import br.com.arieltintel.cliente.utils.TextoUtils;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -23,10 +24,10 @@ import java.util.Comparator;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class ClienteServiceImpl implements ClienteService {
 
-    @Autowired
-    private ClienteRepository clienteRepository;
+    private final ClienteRepository clienteRepository;
 
     @Autowired
     private ModelMapper modelMapper;
