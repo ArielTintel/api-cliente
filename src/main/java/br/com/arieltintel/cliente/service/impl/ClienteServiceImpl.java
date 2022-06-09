@@ -2,7 +2,8 @@ package br.com.arieltintel.cliente.service.impl;
 
 import br.com.arieltintel.cliente.dto.ClienteRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteResponseDTO;
-import br.com.arieltintel.cliente.dto.EnderecoRequestDTO;
+import br.com.arieltintel.cliente.dto.EnderecoResponseDTO;
+import br.com.arieltintel.cliente.dto.TelefoneResponseDTO;
 import br.com.arieltintel.cliente.model.Cliente;
 import br.com.arieltintel.cliente.model.Endereco;
 import br.com.arieltintel.cliente.repository.ClienteRepository;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -64,9 +66,9 @@ public class ClienteServiceImpl implements ClienteService {
         List<Cliente> clienteList = null;
 
         if(StringUtils.hasText(nome)) {
-            clienteList = (List<Cliente>)clienteRepository.findAll();
+            clienteList = clienteRepository.findByNomeContainingIgnoreCase(nome);
         } else {
-            clienteList = (List<Cliente>)clienteRepository.findByNomeContainingIgnoreCase(nome);
+            clienteList = (List<Cliente>)clienteRepository.findAll();
         }
 
         Collections.sort(clienteList, Comparator.comparing(Cliente::getNome));
@@ -75,17 +77,21 @@ public class ClienteServiceImpl implements ClienteService {
 
         clienteList.forEach(cliente -> {
             ClienteResponseDTO clienteResponseDTO = convertClienteResponseDTO(cliente);
+            setTelefone(cliente, clienteResponseDTO);
             clienteResponseDTOList.add(clienteResponseDTO);
         });
+
         return clienteResponseDTOList;
     }
 
-    @Cacheable("clientes")
+//    @Cacheable("clientes")
     public ClienteResponseDTO consultarPorCpf(String cpf) {
         cpf = TextoUtils.removeEspecialCaracter(cpf);
         if (TextoUtils.contemTexto(cpf)) {
             Cliente cliente = clienteRepository.findByCpf(cpf);
-            return modelMapper.map(cliente, ClienteResponseDTO.class);
+            ClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, ClienteResponseDTO.class);
+            setTelefone(cliente, clienteResponseDTO);
+            return clienteResponseDTO;
         }
         return null;
     }
@@ -102,7 +108,9 @@ public class ClienteServiceImpl implements ClienteService {
     @Cacheable("clientes")
     public ClienteResponseDTO consultarPorEmail(String email) {
         Cliente cliente = clienteRepository.findByEmail(email);
-        return modelMapper.map(cliente, ClienteResponseDTO.class);
+        ClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, ClienteResponseDTO.class);
+        setTelefone(cliente, clienteResponseDTO);
+        return clienteResponseDTO;
     }
 
     @CacheEvict(value = "clientes", allEntries = true)
@@ -138,10 +146,12 @@ public class ClienteServiceImpl implements ClienteService {
     private ClienteResponseDTO convertClienteResponseDTO(Cliente clienteSalvo) {
         ClienteResponseDTO clienteResponseDTO = modelMapper.map(clienteSalvo, ClienteResponseDTO.class);
 
+        setTelefone(clienteSalvo, clienteResponseDTO);
+
         clienteResponseDTO.setNomeCompleto(clienteSalvo.getNome() + ESPACO + clienteSalvo.getSobrenome());
         clienteResponseDTO.setEnderecoEletronico(clienteSalvo.getEmail());
         clienteResponseDTO.setCpf(TextoUtils.adicionarMascaraCPF(clienteResponseDTO.getCpf()));
-        clienteResponseDTO.setEndereco(EnderecoRequestDTO.builder()
+        clienteResponseDTO.setEndereco(EnderecoResponseDTO.builder()
                 .complemento(clienteSalvo.getEndereco().getComplemento())
                 .numero(clienteSalvo.getEndereco().getNumero())
                 .referencia(clienteSalvo.getEndereco().getReferencia())
@@ -151,5 +161,24 @@ public class ClienteServiceImpl implements ClienteService {
                 .cidade(clienteSalvo.getEndereco().getCidade())
                 .build());
         return clienteResponseDTO;
+    }
+
+    private void setTelefone(Cliente clienteSalvo, ClienteResponseDTO clienteResponseDTO) {
+        if (!CollectionUtils.isEmpty(clienteSalvo.getTelefones())) {
+            List<TelefoneResponseDTO> telefoneResponseDTO = new ArrayList<>();
+
+            clienteSalvo.getTelefones().stream().forEach(telefone -> {
+                telefoneResponseDTO.add(
+                        TelefoneResponseDTO.builder()
+                        .tipo(telefone.getTipo().getDescricao())
+                        .ddd(telefone.getDdd())
+                        .recado(telefone.getRecado())
+                        .numero(telefone.getNumero())
+                        .build()
+                );
+            });
+
+            clienteResponseDTO.setTelefones(telefoneResponseDTO);
+        }
     }
 }
