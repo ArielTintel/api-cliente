@@ -78,7 +78,7 @@ class ClienteServiceTest {
 				.build();
 
 		clienteResponseDTO = ClienteResponseDTO.builder()
-				.enderecoEletronico(EMAIL)
+				.email(EMAIL)
 				.cpf("89841010011")
 				.nomeCompleto("João Souza")
 				.telefone("40028922")
@@ -121,7 +121,7 @@ class ClienteServiceTest {
 		ClienteResponseDTO clienteResponse = clienteService.consultarPorEmail(EMAIL);
 
 		Assertions.assertNotNull(clienteResponse);
-		Assertions.assertEquals(EMAIL, clienteResponse.getEnderecoEletronico());
+		Assertions.assertEquals(EMAIL, clienteResponse.getEmail());
 	}
 
 	@Test

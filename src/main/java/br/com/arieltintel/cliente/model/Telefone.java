@@ -34,7 +34,7 @@ public class Telefone {
     @Column(nullable = false)
     private String ddd;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String numero;
 
     private String recado;

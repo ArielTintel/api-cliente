@@ -16,10 +16,28 @@ public interface TelefoneRepository extends JpaRepository<Telefone, Long> {
     List<Telefone> findByEmailCliente(String email);
 
     @Query("""
+            FROM Telefone t 
+            JOIN Cliente c ON c.id = t.cliente.id 
+            WHERE c.email = :email 
+                AND t.ddd = :ddd 
+                AND t.numero = :numero
+            """)
+    Telefone findByEmailDddNumeroCliente(String email, String ddd, String numero);
+
+    @Query("""
             FROM Telefone t
             JOIN Cliente c ON c.id = t.cliente.id
             WHERE c.cpf = :cpf
             """)
     List<Telefone> findByCpfCliente(String cpf);
+
+    @Query(value = """
+            FROM Telefone t 
+            JOIN Cliente c ON c.id = t.cliente.id 
+            WHERE c.cpf = :cpf 
+                AND t.ddd = :ddd 
+                AND t.numero = :numero
+            """)
+    Telefone findByCpfDddNumeroCliente(String cpf, String ddd, String numero);
 
 }
