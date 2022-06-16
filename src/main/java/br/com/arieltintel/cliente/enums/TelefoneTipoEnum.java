@@ -6,7 +6,7 @@ public enum TelefoneTipoEnum{
     RESIDENCIAL(2L, "Telefone Residencial"),
     PESSOAL_WHATSAPP(3L, "Telefone e Whatsapp"),
     PESSOAL(4L, "Telefone Pessoal"),
-    RECADO(5L, "Telefone para Recado");
+    RECADO(5L, "Telefone para Recados");
 
     private Long id;
     private String descricao;
