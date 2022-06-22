@@ -149,7 +149,7 @@ public class ClienteServiceImpl implements ClienteService {
         setTelefone(clienteSalvo, clienteResponseDTO);
 
         clienteResponseDTO.setNomeCompleto(clienteSalvo.getNome() + ESPACO + clienteSalvo.getSobrenome());
-        clienteResponseDTO.setEnderecoEletronico(clienteSalvo.getEmail());
+        clienteResponseDTO.setEmail(clienteSalvo.getEmail());
         clienteResponseDTO.setCpf(TextoUtils.adicionarMascaraCPF(clienteResponseDTO.getCpf()));
         clienteResponseDTO.setEndereco(EnderecoResponseDTO.builder()
                 .complemento(clienteSalvo.getEndereco().getComplemento())

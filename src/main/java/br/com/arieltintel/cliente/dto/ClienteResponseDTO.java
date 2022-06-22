@@ -15,7 +15,7 @@ public class ClienteResponseDTO {
 
     private String nomeCompleto;
     private String cpf;
-    private String enderecoEletronico;
+    private String email;
     private EnderecoResponseDTO endereco;
 
     private List<TelefoneResponseDTO> telefones;
