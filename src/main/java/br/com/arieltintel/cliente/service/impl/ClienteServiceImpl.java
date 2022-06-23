@@ -1,9 +1,12 @@
 package br.com.arieltintel.cliente.service.impl;
 
+import br.com.arieltintel.cliente.dto.ClientePutRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteResponseDTO;
 import br.com.arieltintel.cliente.dto.EnderecoResponseDTO;
 import br.com.arieltintel.cliente.dto.TelefoneResponseDTO;
+import br.com.arieltintel.cliente.exceptions.ClienteBadRequestException;
+import br.com.arieltintel.cliente.exceptions.ClienteNotFoundException;
 import br.com.arieltintel.cliente.model.Cliente;
 import br.com.arieltintel.cliente.model.Endereco;
 import br.com.arieltintel.cliente.repository.ClienteRepository;
@@ -16,7 +19,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
@@ -84,43 +86,44 @@ public class ClienteServiceImpl implements ClienteService {
         return clienteResponseDTOList;
     }
 
-//    @Cacheable("clientes")
+    @Cacheable("clientes")
     public ClienteResponseDTO consultarPorCpf(String cpf) {
         cpf = TextoUtils.removeEspecialCaracter(cpf);
         if (TextoUtils.contemTexto(cpf)) {
-            Cliente cliente = clienteRepository.findByCpf(cpf);
+            Cliente cliente = clienteRepository.findByCpf(cpf)
+                    .orElseThrow(() -> new ClienteNotFoundException("Cliente não encontrado para o CPF indicado."));
+
             ClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, ClienteResponseDTO.class);
             setTelefone(cliente, clienteResponseDTO);
             return clienteResponseDTO;
+        } else {
+            throw new ClienteBadRequestException("CPF Inválido.");
         }
-        return null;
     }
 
     @CacheEvict(value = "clientes", allEntries = true)
     public void deletarCliente(String email) throws Exception {
-        Cliente cliente = clienteRepository.findByEmail(email);
-        if (ObjectUtils.isEmpty(cliente)) {
-            throw new Exception("Cliente não encontrado. Verifique o Email digitado.");
-        }
+        Cliente cliente = clienteRepository.findByEmail(email)
+                .orElseThrow(ClienteNotFoundException::new);
+
         clienteRepository.deleteById(cliente.getId());
     }
 
     @Cacheable("clientes")
     public ClienteResponseDTO consultarPorEmail(String email) {
-        Cliente cliente = clienteRepository.findByEmail(email);
+        Cliente cliente = clienteRepository.findByEmail(email)
+                .orElseThrow(ClienteNotFoundException::new);
         ClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, ClienteResponseDTO.class);
         setTelefone(cliente, clienteResponseDTO);
         return clienteResponseDTO;
     }
 
     @CacheEvict(value = "clientes", allEntries = true)
-    public void atualizarCliente(ClienteRequestDTO clienteRequestDTO, String email) throws Exception {
-        Cliente cliente = clienteRepository.findByEmail(email);
-        if(ObjectUtils.isEmpty(cliente)){
-            throw new Exception("Cliente não encontrado.");
-        }
-        modelMapper.map(clienteRequestDTO, cliente);
-        clienteRepository.save(cliente);
+    public void atualizarCliente(ClientePutRequestDTO clientePutRequestDTO, String email) {
+        Cliente clienteOp = clienteRepository.findByEmail(email)
+                .orElseThrow(ClienteNotFoundException::new);
+        modelMapper.map(clientePutRequestDTO, clienteOp);
+        clienteRepository.save(clienteOp);
     }
 
 

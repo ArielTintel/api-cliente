@@ -1,5 +1,6 @@
 package br.com.arieltintel.cliente.controller;
 
+import br.com.arieltintel.cliente.dto.ClientePutRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteResponseDTO;
 import br.com.arieltintel.cliente.service.ClienteService;
@@ -57,7 +58,7 @@ public class ClienteController {
 
     @PutMapping("/email/{email}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void atualizarCliente(@PathVariable String email, @Validated @RequestBody ClienteRequestDTO clienteRequestDTO) throws Exception {
-        clienteService.atualizarCliente(clienteRequestDTO, email);
+    public void atualizarCliente(@PathVariable String email, @Validated @RequestBody ClientePutRequestDTO clientePutRequestDTO) throws Exception {
+        clienteService.atualizarCliente(clientePutRequestDTO, email);
     }
 }
