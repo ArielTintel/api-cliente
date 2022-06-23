@@ -5,12 +5,13 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ClienteRepository extends CrudRepository<Cliente, Long > {
 
-    public List<Cliente> findByNomeContainingIgnoreCase(String nome);
-    public Cliente findByEmail(String email);
-    public Cliente findByCpf(String cpf);
+    List<Cliente> findByNomeContainingIgnoreCase(String nome);
+    Optional<Cliente> findByEmail(String email);
+    Optional<Cliente> findByCpf(String cpf);
 
 }
