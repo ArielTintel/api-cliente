@@ -1,5 +1,6 @@
 package br.com.arieltintel.cliente.service;
 
+import br.com.arieltintel.cliente.dto.ClientePutRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteResponseDTO;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,7 @@ public interface ClienteService {
 
     ClienteResponseDTO criar(ClienteRequestDTO clienteRequestDTO);
 
-    void atualizarCliente(ClienteRequestDTO clienteRequestDTO, String email) throws Exception;
+    void atualizarCliente(ClientePutRequestDTO clientePutRequestDTO, String email) throws Exception;
 
     List<ClienteResponseDTO> listarClientes(String nome);
 
