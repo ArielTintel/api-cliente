@@ -25,12 +25,12 @@ public class TelefoneController {
     @PutMapping("/cpf/{cpf}")
     public void updateByCpfCliente(@PathVariable String cpf,
                                    @RequestParam(value = "ddd-antigo", required = true) String dddAntigo,
-                                   @RequestParam(value = "telelefone-antigo", required = true) String telelefoneAntigo,
+                                   @RequestParam(value = "telefone-antigo", required = true) String telefoneAntigo,
                                    @RequestBody TelefoneRequestDTO telefoneRequestDTO) throws Exception {
         if (!StringUtils.hasText(cpf)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CPF Inválido ou Vazio.");
         }
-        telefoneService.updateTelefoneByCpfCliente(cpf, telefoneRequestDTO, dddAntigo, telelefoneAntigo);
+        telefoneService.updateTelefoneByCpfCliente(cpf, telefoneRequestDTO, dddAntigo, telefoneAntigo);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
