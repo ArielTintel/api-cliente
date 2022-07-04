@@ -14,14 +14,14 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class EnderecoRequestDTO {
 
-    @NotBlank(message = "Cidade não pode ser Nulo ou invalido")
+    @NotBlank(message = "Cidade não pode ser Nulo ou inválido")
     private String cidade;
 
     @Length(min = 2, max = 20)
-    @NotBlank(message = "UF não pode ser Nulo ou invalido")
+    @NotBlank(message = "UF não pode ser Nulo ou inválido")
     private String uf;
 
-    @NotBlank(message = "Logradouro não pode ser Nulo ou invalido")
+    @NotBlank(message = "Logradouro não pode ser Nulo ou inválido")
     private String logradouro;
 
     private Long numero;

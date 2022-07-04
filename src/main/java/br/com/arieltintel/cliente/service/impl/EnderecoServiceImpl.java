@@ -1,6 +1,8 @@
 package br.com.arieltintel.cliente.service.impl;
 
 import br.com.arieltintel.cliente.dto.EnderecoRequestDTO;
+import br.com.arieltintel.cliente.exceptions.EnderecoBadRequestException;
+import br.com.arieltintel.cliente.exceptions.EnderecoNotFoundException;
 import br.com.arieltintel.cliente.model.Endereco;
 import br.com.arieltintel.cliente.repository.EnderecoRepository;
 import br.com.arieltintel.cliente.service.EnderecoService;
@@ -10,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 @Service
 public class EnderecoServiceImpl implements EnderecoService {
@@ -26,17 +27,20 @@ public class EnderecoServiceImpl implements EnderecoService {
     public EnderecoRequestDTO findByCpfCliente(String cpf) {
         cpf = TextoUtils.removeEspecialCaracter(cpf);
         if (TextoUtils.contemTexto(cpf)) {
-            Endereco endereco = enderecoRepository.findByCpfCliente(cpf);
+            Endereco endereco = enderecoRepository.findByCpfCliente(cpf)
+                    .orElseThrow(EnderecoNotFoundException::new);
             return modelMapper.map(endereco, EnderecoRequestDTO.class);
+        } else {
+            throw new EnderecoBadRequestException("CPF Inválido.");
         }
-        return null;
     }
 
     @Override
     @Cacheable("clientes")
     public EnderecoRequestDTO findByEmailCliente(String email) {
 
-        Endereco endereco = enderecoRepository.findByEmailCliente(email);
+        Endereco endereco = enderecoRepository.findByEmailCliente(email)
+                .orElseThrow(EnderecoNotFoundException::new);
 
         return EnderecoRequestDTO.builder()
                 .cep(endereco.getCep())
@@ -51,22 +55,20 @@ public class EnderecoServiceImpl implements EnderecoService {
 
     @Override
     @CacheEvict(value = "clientes", allEntries = true)
-    public void updateEnderecoByCpfCliente(String cpf, EnderecoRequestDTO enderecoRequestDTO) throws Exception {
+    public void updateEnderecoByCpfCliente(String cpf, EnderecoRequestDTO enderecoRequestDTO) {
         cpf = TextoUtils.removeEspecialCaracter(cpf);
-        Endereco endereco = enderecoRepository.findByCpfCliente(cpf);
-        if(endereco == null){
-            throw new Exception("Endereço não encontrado.");
-        }
+        Endereco endereco = enderecoRepository.findByCpfCliente(cpf)
+                .orElseThrow(EnderecoNotFoundException::new);
+
         modelMapper.map(enderecoRequestDTO, endereco);
         enderecoRepository.save(endereco);
     }
 
     @Override
-    public void updateEnderecoByEmailCliente(String email, EnderecoRequestDTO enderecoRequestDTO) throws Exception {
-        Endereco endereco = enderecoRepository.findByEmailCliente(email);
-        if(ObjectUtils.isEmpty(endereco)){
-            throw new Exception("Endereço não encontrado.");
-        }
+    public void updateEnderecoByEmailCliente(String email, EnderecoRequestDTO enderecoRequestDTO) {
+        Endereco endereco = enderecoRepository.findByEmailCliente(email)
+                .orElseThrow(EnderecoNotFoundException::new);
+
         modelMapper.map(enderecoRequestDTO, endereco);
         enderecoRepository.save(endereco);
     }
