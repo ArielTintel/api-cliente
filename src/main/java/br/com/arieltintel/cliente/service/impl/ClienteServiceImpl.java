@@ -1,5 +1,6 @@
 package br.com.arieltintel.cliente.service.impl;
 
+import br.com.arieltintel.cliente.client.EnderecoClient;
 import br.com.arieltintel.cliente.dto.ClientePutRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteResponseDTO;
@@ -12,9 +13,7 @@ import br.com.arieltintel.cliente.model.Endereco;
 import br.com.arieltintel.cliente.repository.ClienteRepository;
 import br.com.arieltintel.cliente.service.ClienteService;
 import br.com.arieltintel.cliente.utils.TextoUtils;
-import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -28,20 +27,31 @@ import java.util.Comparator;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class ClienteServiceImpl implements ClienteService {
 
     private final ClienteRepository clienteRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final EnderecoClient enderecoClient;
+
+    private final ModelMapper modelMapper;
 
     public static final String ESPACO = " ";
     public static final int ZERO = 0;
 
+    public ClienteServiceImpl(ClienteRepository clienteRepository, EnderecoClient enderecoClient, ModelMapper modelMapper) {
+        this.clienteRepository = clienteRepository;
+        this.enderecoClient = enderecoClient;
+        this.modelMapper = modelMapper;
+    }
+
     @CacheEvict(value = "clientes", allEntries = true)
     @Transactional
-    public ClienteResponseDTO criar(ClienteRequestDTO clienteRequestDTO){
+    public ClienteResponseDTO criar(ClienteRequestDTO clienteRequestDTO) {
+
+        EnderecoResponseDTO enderecoResponseDTO = enderecoClient.getEndereco(clienteRequestDTO.getEndereco().getCep());
+        clienteRequestDTO.setEndereco(enderecoResponseDTO.to(clienteRequestDTO.getEndereco().getNumero(),
+                clienteRequestDTO.getEndereco().getComplemento(),
+                clienteRequestDTO.getEndereco().getReferencia()));
 
         Cliente cliente = convertCliente(clienteRequestDTO);
 
@@ -63,14 +73,14 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Cacheable("clientes")
-    public List<ClienteResponseDTO> listarClientes(String nome){
+    public List<ClienteResponseDTO> listarClientes(String nome) {
 
-        List<Cliente> clienteList = null;
+        List<Cliente> clienteList;
 
-        if(StringUtils.hasText(nome)) {
+        if (StringUtils.hasText(nome)) {
             clienteList = clienteRepository.findByNomeContainingIgnoreCase(nome);
         } else {
-            clienteList = (List<Cliente>)clienteRepository.findAll();
+            clienteList = (List<Cliente>) clienteRepository.findAll();
         }
 
         Collections.sort(clienteList, Comparator.comparing(Cliente::getNome));
@@ -140,7 +150,7 @@ public class ClienteServiceImpl implements ClienteService {
     private void setNomeSobreNome(ClienteRequestDTO clienteRequestDTO, Cliente cliente) {
         int delimitadorIndex = clienteRequestDTO.getNomeCompleto().indexOf(ESPACO);
         String nome = clienteRequestDTO.getNomeCompleto().substring(ZERO, delimitadorIndex);
-        String sobrenome = clienteRequestDTO.getNomeCompleto().substring(delimitadorIndex+1, clienteRequestDTO.getNomeCompleto().length());
+        String sobrenome = clienteRequestDTO.getNomeCompleto().substring(delimitadorIndex + 1, clienteRequestDTO.getNomeCompleto().length());
 
         cliente.setNome(nome);
         cliente.setSobrenome(sobrenome);
@@ -173,11 +183,11 @@ public class ClienteServiceImpl implements ClienteService {
             clienteSalvo.getTelefones().stream().forEach(telefone -> {
                 telefoneResponseDTO.add(
                         TelefoneResponseDTO.builder()
-                        .tipo(telefone.getTipo().getDescricao())
-                        .ddd(telefone.getDdd())
-                        .recado(telefone.getRecado())
-                        .numero(telefone.getNumero())
-                        .build()
+                                .tipo(telefone.getTipo().getDescricao())
+                                .ddd(telefone.getDdd())
+                                .recado(telefone.getRecado())
+                                .numero(telefone.getNumero())
+                                .build()
                 );
             });
 

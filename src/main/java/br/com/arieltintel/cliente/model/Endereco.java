@@ -44,7 +44,7 @@ public class Endereco {
     private String logradouro;
 
     @Column(nullable = false)
-    private long numero;
+    private String numero;
 
     @Column(nullable = false)
     private String cep;
