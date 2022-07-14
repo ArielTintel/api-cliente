@@ -1,7 +1,6 @@
 package br.com.arieltintel.cliente.service;
 
 import br.com.arieltintel.cliente.dto.EnderecoRequestDTO;
-import br.com.arieltintel.cliente.dto.EnderecoResponseDTO;
 
 public interface EnderecoService {
 
@@ -9,8 +8,8 @@ public interface EnderecoService {
 
     EnderecoRequestDTO findByEmailCliente(String email);
 
-    void updateEnderecoByCpfCliente(String cpf, EnderecoRequestDTO enderecoRequestDTO) throws Exception;
+    void updateEnderecoByCpfCliente(String cpf, EnderecoRequestDTO enderecoRequestDTO);
 
-    void updateEnderecoByEmailCliente(String email, EnderecoRequestDTO enderecoRequestDTO) throws Exception;
+    void updateEnderecoByEmailCliente(String email, EnderecoRequestDTO enderecoRequestDTO);
 
 }

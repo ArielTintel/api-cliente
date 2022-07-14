@@ -2,6 +2,7 @@ version: '3.3'
 services:
   db:
     image: mysql:8
+    container_name: mysql_db
     volumes:
       - dbdata:/var/lib/mysql
     networks:
@@ -15,6 +16,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
     networks:
       - clientes-compose-network
     links:
