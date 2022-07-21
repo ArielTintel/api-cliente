@@ -1,11 +1,14 @@
 package br.com.arieltintel.cliente.service.impl;
 
 import br.com.arieltintel.cliente.dto.TelefoneRequestDTO;
+import br.com.arieltintel.cliente.exceptions.TelefoneBadRequestException;
+import br.com.arieltintel.cliente.exceptions.TelefoneNotFoundEXception;
 import br.com.arieltintel.cliente.model.Telefone;
 import br.com.arieltintel.cliente.repository.TelefoneRepository;
 import br.com.arieltintel.cliente.service.TelefoneService;
 import br.com.arieltintel.cliente.utils.TextoUtils;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -25,14 +28,10 @@ public class TelefoneServiceImpl implements TelefoneService {
     public void updateTelefoneByCpfCliente(String cpf,
                                            TelefoneRequestDTO telefoneRequestDTO,
                                            String dddAntigo,
-                                           String telelefoneAntigo) throws Exception {
+                                           String telelefoneAntigo){
         cpf = TextoUtils.removeEspecialCaracter(cpf);
-        Telefone telefone = telefoneRepository.findByCpfDddNumeroCliente(cpf, dddAntigo, telelefoneAntigo);
-
-        if (ObjectUtils.isEmpty(telefone)) {
-            throw new Exception("Telefone não encontrado para o CPF: " + cpf);
-        }
-
+        Telefone telefone = telefoneRepository.findByCpfDddNumeroCliente(cpf,dddAntigo, telelefoneAntigo)
+                .orElseThrow(TelefoneNotFoundEXception::new);
         modelMapper.map(telefoneRequestDTO, telefone);
         telefoneRepository.save(telefone);
     }
@@ -41,11 +40,12 @@ public class TelefoneServiceImpl implements TelefoneService {
     public void updateTelefoneByEmailCliente(String email,
                                              TelefoneRequestDTO telefoneRequestDTO,
                                              String dddAntigo,
-                                             String telelefoneAntigo) throws Exception {
-        Telefone telefone = telefoneRepository.findByEmailDddNumeroCliente(email, dddAntigo, telelefoneAntigo);
+                                             String telelefoneAntigo){
+        Telefone telefone = telefoneRepository.findByEmailDddNumeroCliente(email, dddAntigo, telelefoneAntigo)
+                .orElseThrow(TelefoneNotFoundEXception::new);
 
-        if (ObjectUtils.isEmpty(telefone)) {
-            throw new Exception("Telefone não encontrado para o Email: " + email);
+        if (ObjectUtils.isEmpty(telefoneRequestDTO)) {
+            throw new TelefoneNotFoundEXception("Telefone Inválido ou Nulo");
         }
 
         modelMapper.map(telefoneRequestDTO, telefone);
