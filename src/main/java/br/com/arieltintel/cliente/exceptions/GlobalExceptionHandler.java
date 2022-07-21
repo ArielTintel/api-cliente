@@ -26,4 +26,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(EnderecoNotFoundException.class)
+    public final ResponseEntity<Object> handleAllExceptions(EnderecoNotFoundException exception) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("error", exception.getMessage());
+        return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(EnderecoBadRequestException.class)
+    public final ResponseEntity<Object> handleAllExceptions(EnderecoBadRequestException exception) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("error", exception.getMessage());
+        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+    }
+
 }
