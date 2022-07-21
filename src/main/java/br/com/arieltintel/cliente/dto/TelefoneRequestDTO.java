@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -16,9 +17,11 @@ import javax.validation.constraints.NotNull;
 public class TelefoneRequestDTO {
 
     @Length(min = 2, max = 3)
+    @NotBlank
     private String ddd;
 
     @Length(min = 5, max = 20)
+    @NotBlank
     private String numero;
 
     @NotNull

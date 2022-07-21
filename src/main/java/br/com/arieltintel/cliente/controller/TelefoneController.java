@@ -1,6 +1,7 @@
 package br.com.arieltintel.cliente.controller;
 
 import br.com.arieltintel.cliente.dto.TelefoneRequestDTO;
+import br.com.arieltintel.cliente.exceptions.TelefoneBadRequestException;
 import br.com.arieltintel.cliente.service.TelefoneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ public class TelefoneController {
                                    @RequestParam(value = "telefone-antigo", required = true) String telefoneAntigo,
                                    @RequestBody TelefoneRequestDTO telefoneRequestDTO) throws Exception {
         if (!StringUtils.hasText(cpf)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CPF Inválido ou Vazio.");
+            throw new TelefoneBadRequestException("CPF Inválido ou Nulo");
         }
         telefoneService.updateTelefoneByCpfCliente(cpf, telefoneRequestDTO, dddAntigo, telefoneAntigo);
     }
@@ -38,9 +39,9 @@ public class TelefoneController {
     public void updateByEmailCliente(@PathVariable String email,
                                      @RequestParam(value = "ddd-antigo", required = true) String dddAntigo,
                                      @RequestParam(value = "telelefone-antigo", required = true) String telelefoneAntigo,
-                                   @RequestBody TelefoneRequestDTO telefoneRequestDTO) throws Exception {
+                                   @RequestBody TelefoneRequestDTO telefoneRequestDTO) {
         if (!StringUtils.hasText(email)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email Inválido ou Vazio.");
+            throw new TelefoneBadRequestException("Email Inválido ou Nulo");
         }
         telefoneService.updateTelefoneByEmailCliente(email, telefoneRequestDTO, dddAntigo, telelefoneAntigo);
     }

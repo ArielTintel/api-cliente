@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TelefoneRepository extends JpaRepository<Telefone, Long> {
 
@@ -22,7 +23,7 @@ public interface TelefoneRepository extends JpaRepository<Telefone, Long> {
                 AND t.ddd = :ddd 
                 AND t.numero = :numero
             """)
-    Telefone findByEmailDddNumeroCliente(String email, String ddd, String numero);
+    Optional<Telefone> findByEmailDddNumeroCliente(String email, String ddd, String numero);
 
     @Query("""
             FROM Telefone t
@@ -38,6 +39,6 @@ public interface TelefoneRepository extends JpaRepository<Telefone, Long> {
                 AND t.ddd = :ddd 
                 AND t.numero = :numero
             """)
-    Telefone findByCpfDddNumeroCliente(String cpf, String ddd, String numero);
+    Optional<Telefone> findByCpfDddNumeroCliente(String cpf, String ddd, String numero);
 
 }
