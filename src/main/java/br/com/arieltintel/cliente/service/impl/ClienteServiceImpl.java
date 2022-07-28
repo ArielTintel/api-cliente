@@ -6,6 +6,7 @@ import br.com.arieltintel.cliente.dto.ClienteRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteResponseDTO;
 import br.com.arieltintel.cliente.dto.EnderecoResponseDTO;
 import br.com.arieltintel.cliente.dto.TelefoneResponseDTO;
+import br.com.arieltintel.cliente.exceptions.CepNotFoundException;
 import br.com.arieltintel.cliente.exceptions.ClienteBadRequestException;
 import br.com.arieltintel.cliente.exceptions.ClienteNotFoundException;
 import br.com.arieltintel.cliente.model.Cliente;
@@ -13,11 +14,15 @@ import br.com.arieltintel.cliente.model.Endereco;
 import br.com.arieltintel.cliente.repository.ClienteRepository;
 import br.com.arieltintel.cliente.service.ClienteService;
 import br.com.arieltintel.cliente.utils.TextoUtils;
+import feign.FeignException;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
@@ -26,6 +31,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+@Log4j2
 @Service
 public class ClienteServiceImpl implements ClienteService {
 
@@ -48,10 +54,7 @@ public class ClienteServiceImpl implements ClienteService {
     @Transactional
     public ClienteResponseDTO criar(ClienteRequestDTO clienteRequestDTO) {
 
-        EnderecoResponseDTO enderecoResponseDTO = enderecoClient.getEndereco(clienteRequestDTO.getEndereco().getCep());
-        clienteRequestDTO.setEndereco(enderecoResponseDTO.to(clienteRequestDTO.getEndereco().getNumero(),
-                clienteRequestDTO.getEndereco().getComplemento(),
-                clienteRequestDTO.getEndereco().getReferencia()));
+        setEndereco(clienteRequestDTO);
 
         Cliente cliente = convertCliente(clienteRequestDTO);
 
@@ -70,6 +73,24 @@ public class ClienteServiceImpl implements ClienteService {
                 .build());
 
         return convertClienteResponseDTO(clienteSalvo);
+    }
+
+    private void setEndereco(ClienteRequestDTO clienteRequestDTO) {
+
+        if (!ObjectUtils.isEmpty(clienteRequestDTO.getEndereco())) {
+                String cep = clienteRequestDTO.getEndereco().getCep();
+            try {
+                EnderecoResponseDTO enderecoResponseDTO = enderecoClient.getEndereco(cep);
+                clienteRequestDTO.setEndereco(enderecoResponseDTO.to(clienteRequestDTO.getEndereco().getNumero(),
+                        clienteRequestDTO.getEndereco().getComplemento(),
+                        clienteRequestDTO.getEndereco().getReferencia()));
+            } catch (FeignException e) {
+                log.error("Erro ao acessar a api endereco: " + e);
+                if (HttpStatus.NOT_FOUND.value() == e.status()) {
+                    throw new CepNotFoundException(cep);
+                }
+            }
+        }
     }
 
     @Cacheable("clientes")
