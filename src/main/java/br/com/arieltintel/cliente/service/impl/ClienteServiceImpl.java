@@ -6,6 +6,7 @@ import br.com.arieltintel.cliente.dto.ClienteRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteResponseDTO;
 import br.com.arieltintel.cliente.dto.EnderecoResponseDTO;
 import br.com.arieltintel.cliente.dto.TelefoneResponseDTO;
+import br.com.arieltintel.cliente.exceptions.CepBadRequestException;
 import br.com.arieltintel.cliente.exceptions.CepNotFoundException;
 import br.com.arieltintel.cliente.exceptions.ClienteBadRequestException;
 import br.com.arieltintel.cliente.exceptions.ClienteNotFoundException;
@@ -89,6 +90,10 @@ public class ClienteServiceImpl implements ClienteService {
                 if (HttpStatus.NOT_FOUND.value() == e.status()) {
                     throw new CepNotFoundException(cep);
                 }
+                if (HttpStatus.BAD_REQUEST.value() == e.status()) {
+                    throw new CepBadRequestException(cep);
+                }
+                throw new RuntimeException("Erro ao acessar a api endereco: " + e);
             }
         }
     }
