@@ -115,7 +115,6 @@ public class ClienteServiceImpl implements ClienteService {
 
         clienteList.forEach(cliente -> {
             ClienteResponseDTO clienteResponseDTO = convertClienteResponseDTO(cliente);
-            setTelefone(cliente, clienteResponseDTO);
             clienteResponseDTOList.add(clienteResponseDTO);
         });
 
@@ -129,9 +128,7 @@ public class ClienteServiceImpl implements ClienteService {
             Cliente cliente = clienteRepository.findByCpf(cpf)
                     .orElseThrow(() -> new ClienteNotFoundException("Cliente não encontrado para o CPF indicado."));
 
-            ClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, ClienteResponseDTO.class);
-            setTelefone(cliente, clienteResponseDTO);
-            return clienteResponseDTO;
+            return new ClienteResponseDTO().to(cliente);
         } else {
             throw new ClienteBadRequestException("CPF Inválido.");
         }
@@ -149,9 +146,7 @@ public class ClienteServiceImpl implements ClienteService {
     public ClienteResponseDTO consultarPorEmail(String email) {
         Cliente cliente = clienteRepository.findByEmail(email)
                 .orElseThrow(ClienteNotFoundException::new);
-        ClienteResponseDTO clienteResponseDTO = modelMapper.map(cliente, ClienteResponseDTO.class);
-        setTelefone(cliente, clienteResponseDTO);
-        return clienteResponseDTO;
+        return new ClienteResponseDTO().to(cliente);
     }
 
     @CacheEvict(value = "clientes", allEntries = true)
@@ -183,41 +178,11 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     private ClienteResponseDTO convertClienteResponseDTO(Cliente clienteSalvo) {
-        ClienteResponseDTO clienteResponseDTO = modelMapper.map(clienteSalvo, ClienteResponseDTO.class);
+        ClienteResponseDTO clienteResponseDTO = new ClienteResponseDTO().to(clienteSalvo);
 
-        setTelefone(clienteSalvo, clienteResponseDTO);
-
-        clienteResponseDTO.setNomeCompleto(clienteSalvo.getNome() + ESPACO + clienteSalvo.getSobrenome());
-        clienteResponseDTO.setEmail(clienteSalvo.getEmail());
-        clienteResponseDTO.setCpf(TextoUtils.adicionarMascaraCPF(clienteResponseDTO.getCpf()));
-        clienteResponseDTO.setEndereco(EnderecoResponseDTO.builder()
-                .complemento(clienteSalvo.getEndereco().getComplemento())
-                .numero(clienteSalvo.getEndereco().getNumero())
-                .referencia(clienteSalvo.getEndereco().getReferencia())
-                .uf(clienteSalvo.getEndereco().getUf())
-                .cep(clienteSalvo.getEndereco().getCep())
-                .logradouro(clienteSalvo.getEndereco().getLogradouro())
-                .cidade(clienteSalvo.getEndereco().getCidade())
-                .build());
         return clienteResponseDTO;
     }
 
-    private void setTelefone(Cliente clienteSalvo, ClienteResponseDTO clienteResponseDTO) {
-        if (!CollectionUtils.isEmpty(clienteSalvo.getTelefones())) {
-            List<TelefoneResponseDTO> telefoneResponseDTO = new ArrayList<>();
-
-            clienteSalvo.getTelefones().stream().forEach(telefone -> {
-                telefoneResponseDTO.add(
-                        TelefoneResponseDTO.builder()
-                                .tipo(telefone.getTipo().getDescricao())
-                                .ddd(telefone.getDdd())
-                                .recado(telefone.getRecado())
-                                .numero(telefone.getNumero())
-                                .build()
-                );
-            });
-
-            clienteResponseDTO.setTelefones(telefoneResponseDTO);
-        }
-    }
 }
+
+

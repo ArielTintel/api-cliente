@@ -1,15 +1,23 @@
 package br.com.arieltintel.cliente.dto;
 
+import br.com.arieltintel.cliente.model.Cliente;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+import java.io.Serializable;
+
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EnderecoResponseDTO {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class EnderecoResponseDTO implements Serializable {
 
     private String cidade;
     private String uf;
@@ -31,5 +39,7 @@ public class EnderecoResponseDTO {
                 .referencia(referencia)
                 .build();
     }
+
+
 
 }
