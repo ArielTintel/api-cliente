@@ -5,7 +5,6 @@ import br.com.arieltintel.cliente.dto.ClientePutRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteRequestDTO;
 import br.com.arieltintel.cliente.dto.ClienteResponseDTO;
 import br.com.arieltintel.cliente.dto.EnderecoResponseDTO;
-import br.com.arieltintel.cliente.dto.TelefoneResponseDTO;
 import br.com.arieltintel.cliente.exceptions.CepBadRequestException;
 import br.com.arieltintel.cliente.exceptions.CepNotFoundException;
 import br.com.arieltintel.cliente.exceptions.ClienteBadRequestException;
@@ -16,13 +15,13 @@ import br.com.arieltintel.cliente.repository.ClienteRepository;
 import br.com.arieltintel.cliente.service.ClienteService;
 import br.com.arieltintel.cliente.utils.TextoUtils;
 import feign.FeignException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -34,6 +33,7 @@ import java.util.List;
 
 @Log4j2
 @Service
+@RequiredArgsConstructor
 public class ClienteServiceImpl implements ClienteService {
 
     private final ClienteRepository clienteRepository;
@@ -44,12 +44,6 @@ public class ClienteServiceImpl implements ClienteService {
 
     public static final String ESPACO = " ";
     public static final int ZERO = 0;
-
-    public ClienteServiceImpl(ClienteRepository clienteRepository, EnderecoClient enderecoClient, ModelMapper modelMapper) {
-        this.clienteRepository = clienteRepository;
-        this.enderecoClient = enderecoClient;
-        this.modelMapper = modelMapper;
-    }
 
     @CacheEvict(value = "clientes", allEntries = true)
     @Transactional
