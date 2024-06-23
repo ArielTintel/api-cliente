@@ -7,6 +7,7 @@ import br.com.arieltintel.cliente.dto.EnderecoRequestDTO;
 import br.com.arieltintel.cliente.dto.EnderecoResponseDTO;
 import br.com.arieltintel.cliente.dto.TelefoneResponseDTO;
 import br.com.arieltintel.cliente.enums.TelefoneTipoEnum;
+import br.com.arieltintel.cliente.exceptions.ClienteBadRequestException;
 import br.com.arieltintel.cliente.model.Cliente;
 import br.com.arieltintel.cliente.model.Endereco;
 import br.com.arieltintel.cliente.model.Telefone;
@@ -24,6 +25,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -173,7 +176,7 @@ class ClienteServiceImplTest {
         ClienteResponseDTO clienteResponse = clienteService.consultarPorEmail(EMAIL);
 
         Assertions.assertNotNull(clienteResponse);
-        Assertions.assertEquals(EMAIL, clienteResponse.getEmail());
+        assertEquals(EMAIL, clienteResponse.getEmail());
     }
 
     @Test
@@ -184,7 +187,7 @@ class ClienteServiceImplTest {
         ClienteResponseDTO clienteResponse = clienteService.consultarPorCpf(CPF);
 
         Assertions.assertNotNull(clienteResponse);
-        Assertions.assertEquals(CPFMASCARA, clienteResponse.getCpf());
+        assertEquals(CPFMASCARA, clienteResponse.getCpf());
     }
 
     @Test
@@ -200,17 +203,25 @@ class ClienteServiceImplTest {
 
         // Assert
         Assertions.assertNotNull(clienteResponseDTO);
-        Assertions.assertEquals(CPFMASCARA, clienteResponse.getCpf());
+        assertEquals(CPFMASCARA, clienteResponse.getCpf());
         verify(clienteRepository, times(1)).save(cliente);
 
     }
 
     @Test
     void exception_ClienteBadRequestException() {
+        ClienteBadRequestException exception = assertThrows(ClienteBadRequestException.class, () -> {
+            clienteService.consultarPorCpf("  ");
+        });
+        assertEquals("CPF Inválido.", exception.getMessage());
     }
 
     @Test
-    void deletarCliente() {
+    void deletarCliente() throws Exception {
+        cliente.setId(1L);
+        when(clienteRepository.findByEmail(EMAIL)).thenReturn(Optional.ofNullable(cliente));
+        clienteService.deletarCliente(EMAIL);
+        verify(clienteRepository, times(1)).deleteById(cliente.getId());
     }
 
     @Test
